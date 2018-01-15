@@ -15,7 +15,8 @@ router.get('/', function(req, res, next) {
 // 管理员首页
 router.get('/home', function(req, res, next) {
 	res.render('admin/home', {
-		title: '考勤管理系统'
+		title: '考勤管理系统',
+		xiugaiClass: 'adminUpdatePassword'
 	});
 });
 
@@ -58,24 +59,30 @@ router.post('/userinfo', function(req, res, next) {
 		if (err) {
 			return next(err);
 		}
-		adminmodel.getUserPage(function(err, pagenum) {
+		adminmodel.getZhiWei(function(err, zhiweiList) {
 			if (err) {
 				return next(err);
 			}
-			adminmodel.getuser(page, function(err, userList) {
-				for (var i = 0; i < userList.length; i++) {
-					var rztime = userList[i].ruzhitime * 1000;
-					var d = new Date(rztime);
-					userList[i].ruzhitime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+			adminmodel.getUserPage(function(err, pagenum) {
+				if (err) {
+					return next(err);
 				}
-				res.render('admin/UserInfo/_UserInfo', {
-					bumenList: bumenList,
-					pagenum: pagenum[0],
-					userList: userList
-				}, function(err, html) {
-					res.json({
-						'success': true,
-						'view': html
+				adminmodel.getuser(page, function(err, userList) {
+					for (var i = 0; i < userList.length; i++) {
+						var rztime = userList[i].ruzhitime * 1000;
+						var d = new Date(rztime);
+						userList[i].ruzhitime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+					}
+					res.render('admin/UserInfo/_UserInfo', {
+						bumenList: bumenList,
+						zhiweiList: zhiweiList,
+						pagenum: pagenum[0],
+						userList: userList
+					}, function(err, html) {
+						res.json({
+							'success': true,
+							'view': html
+						});
 					});
 				});
 			});
@@ -133,6 +140,23 @@ router.post('/addbumen', function(req, res, next) {
 	});
 });
 
+// 修改部门名称
+router.post('/updatebumen', function(req, res, next) {
+	var bumenid = req.body.bumenid;
+	var name = req.body.name;
+	adminmodel.updateBuMenName(name, bumenid, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next();
+		}
+		res.json({
+			'success': '修改部门名称成功'
+		});
+	});
+});
+
 // 添加员工
 router.post('/adduser', function(req, res, next) {
 	var hash = crypto.createHash('md5');
@@ -183,17 +207,23 @@ router.post('/getEditUserInfoFrame', function(req, res, next) {
 		if (err) {
 			return next(err);
 		}
-		adminmodel.getThisUser(userId, function(err, userItem) {
+		adminmodel.getZhiWei(function(err, zhiweiList) {
 			if (err) {
 				return next(err);
 			}
-			res.render('admin/UserInfo/_EditUserInfo', {
-				bumenList: bumenList,
-				userItem: userItem[0]
-			}, function(err, html) {
-				res.json({
-					'success': true,
-					'view': html
+			adminmodel.getThisUser(userId, function(err, userItem) {
+				if (err) {
+					return next(err);
+				}
+				res.render('admin/UserInfo/_EditUserInfo', {
+					bumenList: bumenList,
+					zhiweiList: zhiweiList,
+					userItem: userItem[0]
+				}, function(err, html) {
+					res.json({
+						'success': true,
+						'view': html
+					});
 				});
 			});
 		});
@@ -241,6 +271,39 @@ router.post('/reUserPassword', function(req, res, next) {
 			'success': '重置密码成功'
 		});
 	})
+});
+
+// 职位管理界面
+router.post('/getZhiWei', function(req, res, next) {
+	adminmodel.getZhiWei(function(err, zhiweiList) {
+		if (err) {
+			return next(err);
+		}
+		res.render('admin/ZhiWei/_ZhiWei', {
+			zhiweiList: zhiweiList
+		}, function(err, html) {
+			res.json({
+				'success': true,
+				'view': html
+			});
+		});
+	});
+});
+
+// 添加职位
+router.post('/addzhiwei', function(req, res, next) {
+	var name = req.body.name;
+	adminmodel.addzhiwei(name, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next();
+		}
+		res.json({
+			'success': '添加职位成功'
+		});
+	});
 });
 
 module.exports = router;

@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 
 var admin = require('./routes/admin/admin');
 
@@ -41,7 +40,6 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', index);
-app.use('/users', users);
 
 app.use('/admin', admin);
 

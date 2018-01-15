@@ -20,7 +20,7 @@ html(lang='en')
     script(src='/public/js/sweet-alert.min.js')
     block css
   body
-    mixin topnav
+    mixin topnav(xiugaiClass)
       header.header.white-bg
         .sidebar-toggle-box
           .icon-reorder.tooltips(data-original-title='Toggle Navigation', data-placement='right')
@@ -39,16 +39,16 @@ html(lang='en')
                   a(href='javascript:;')
                     i.icon-suitcase
                     | #{name}
-                li
+                li(class='#{xiugaiClass}')
                   a(href='javascript:;')
                     i.icon-cog
-                    |  设置
+                    |  修改密码
                 li
                   a(href='javascript:;')
                     i.icon-bell-alt
                     |  通知
                 li
-                  a(href='javascript:;')
+                  a(href='/logout')
                     i.icon-key
                     |  退出
     mixin adminleftnav
@@ -71,7 +71,7 @@ html(lang='en')
               a(href='javascript:;')
                 i.icon-dashboard
                 span 班表设置管理
-            li.sub-menu
+            li.sub-menu.leftli-zhiwei
               a(href='javascript:;')
                 i.icon-dashboard
                 span 职位发布管理
@@ -91,7 +91,22 @@ html(lang='en')
               a(href='javascript:;')
                 i.icon-dashboard
                 span 添加管理员
-    
+    mixin userleftnav
+      aside
+        #sidebar.nav-collapse
+          ul.sidebar-menu
+            li.active.leftli-usersign
+              a(href='javascript:;')
+                i.icon-dashboard
+                span 签到
+            li.sub-menu.leftli-daiban
+              a(href='javascript:;')
+                i.icon-dashboard
+                span 事项申请
+            li.sub-menu.leftli-userqingjia
+              a(href='javascript:;')
+                i.icon-dashboard
+                span 请假
     // 导航
     block nav
     // 内容

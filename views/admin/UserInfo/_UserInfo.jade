@@ -31,9 +31,11 @@ section.wrapper
                   each bumenitem in bumenList
                     option(value= bumenitem.id)= bumenitem.name
             .form-group
-              label.col-sm-2.control-label 职务
+              label.col-sm-2.control-label 职位
               .col-sm-10
-                input.form-control(type='text', placeholder='职务', name='zhiwu')
+                select.form-control(name='zhiwu')
+                  each zhiweiitem in zhiweiList
+                    option(value= zhiweiitem.id)= zhiweiitem.name
             .form-group
               label.col-sm-2.control-label 性别
               .col-sm-10

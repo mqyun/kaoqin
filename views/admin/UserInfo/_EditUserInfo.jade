@@ -24,7 +24,12 @@
 		.form-group
 			label.col-sm-2.control-label 职务
 			.col-sm-10
-				input.form-control(type='text', placeholder='职务', name='edit-zhiwu', value= userItem.zhiwei)
+				select.form-control(name='edit-zhiwu')
+					each zhiweiitem in zhiweiList
+						- if (zhiweiitem.id == userItem.zhiwei)
+							option(value= zhiweiitem.id, selected='selected')= zhiweiitem.name
+						- else
+							option(value= zhiweiitem.id)= zhiweiitem.name
 		.form-group
 			label.col-sm-2.control-label 性别
 			.col-sm-10

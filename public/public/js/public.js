@@ -80,3 +80,18 @@ function getFromUrl(key) {
 	}
 	return '';
 }
+
+// 获取经纬度
+function GetPostion(callback) {
+  var address = "具体的地理位置 ";
+	var longtitude = 0;
+	var latitude = 0;
+  var url = "http://api.map.baidu.com/geocoder/v2/?address=" + address + "&output=json&ak=FG7wxr1VUj0k2NwoO3yXzymd&callback=?";
+  $.getJSON(url, function(data) {
+		// 经度
+    longtitude = data.result.location.lng;
+		// 纬度
+    latitude = data.result.location.lat;
+		callback(longtitude, latitude);
+  });
+}
