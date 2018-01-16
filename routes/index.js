@@ -208,7 +208,7 @@ router.post('/pagedaibaninfo', function(req, res, next) {
 router.post('/userQingJia', function(req, res, next) {
   var page = 0;
   var userid = req.session.uid;
-  usermodel.getQingJiaPage(function(err, pagenum) {
+  usermodel.getQingJiaPage(userid, function(err, pagenum) {
     if (err) {
       return next(err);
     }
@@ -260,8 +260,39 @@ router.post('/addQingJia', function(req, res, next) {
       });
       return next(err);
     }
-    res.json({
-      'success': '请假成功，请等待管理员审核！'
+    usermodel.getNianJiaDay(userid, function(err, userInfo) {
+      if (err) {
+        res.json({
+          'error': err
+        });
+        return next(err);
+      }
+      var ruzhitime = userInfo[0].ruzhitime;
+      var nowtime = Date.parse(new Date()) / 1000;
+      var ruzhiday = Math.floor((nowtime - ruzhitime) / 86400);
+      var nianjia;
+      if (ruzhiday < 365) {
+        nianjia = 7;
+      } else {
+        nianjia = 14;
+      }
+      var qingjiaday = Math.ceil((endtime - starttime) / 86400);
+      usermodel.updateNianJia(nianjia, qingjiaday, userid, function(err) {
+        if (err) {
+          res.json({
+            'error': err
+          });
+          return next(err);
+        }
+        var qingjia = userInfo[0].qingjia + qingjiaday;
+        var resSyNianJia = nianjia - qingjia;
+        if (resSyNianJia < 0) {
+          resSyNianJia = 0;
+        }
+        res.json({
+          'success': '请假成功，请等待管理员审核！您的剩余年假时间还有' + resSyNianJia + '天!'
+        });
+      });
     });
   });
 });

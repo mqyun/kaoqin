@@ -82,9 +82,9 @@ module.exports = {
 		});
   },
   // 获取请假记录页码
-  getQingJiaPage: function(callback) {
-    var sql = "select ceil(count(id)/10) as page from qingjia;";
-    db.exec(sql, '', function(err, rows) {
+  getQingJiaPage: function(user_id, callback) {
+    var sql = "select ceil(count(id)/10) as page from qingjia where user_id = ?;";
+    db.exec(sql, user_id, function(err, rows) {
       if (err) {
         callback(err);
       }
@@ -110,6 +110,26 @@ module.exports = {
 			}
 			callback(err);
 		});
+  },
+  // 获取更新员工年假时间
+  getNianJiaDay: function(user_id, callback) {
+    var sql = "select * from user where id = ?;";
+    db.exec(sql, user_id, function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
+  // 更新员工年假时间和请假时间
+  updateNianJia: function(nianjia, qingjia, user_id, callback) {
+    var sql = "update user set nianjia = ?,qingjia = qingjia + ? where id = ?;";
+    db.exec(sql, [nianjia, qingjia, user_id], function(err) {
+      if (err) {
+        callback(err);
+      }
+      callback(err);
+    });
   },
   // 获取原密码
   getOldPassword: function(id, callback) {

@@ -43,7 +43,7 @@ module.exports = {
   },
   // 添加员工
   adduser: function(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, callback) {
-    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, nianjia) values(?,?,?,?,?,?,?,?,?,0);";
+    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, nianjia, qingjia) values(?,?,?,?,?,?,?,?,?,7,0);";
     db.exec(sql, [account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime], function(err) {
       if (err) {
         callback(err);

@@ -196,17 +196,20 @@ $(document).on('click', '.btn-qingjia', function() {
             'starttime': starttime,
             'endtime': endtime
           }
-          if (reason.length == 0 || starttime.length == 0 || endtime.length == 0) {
-            showTips('warning', 'Warning!', '请检查填写信息！');
+          console.log(endtime - starttime);
+          if ((endtime - starttime) < 0 || (endtime - starttime) == 0) {
+            showTips('warning', 'Warning!', '您的请假时间有问题，请检查!');
           } else {
-            ajaxPost('/addQingJia', data, function(result) {
-              if (result.success) {
-                showTips('success', 'Success!', result.success);
-                setTimeout(function() {
+            if (reason.length == 0 || starttime.length == 0 || endtime.length == 0) {
+              showTips('warning', 'Warning!', '请检查填写信息！');
+            } else {
+              ajaxPost('/addQingJia', data, function(result) {
+                if (result.success) {
+                  showTips('success', 'Success!', result.success, 4000);
                   $('.leftli-userqingjia').click();
-                }, 1000);
-              }
-            });
+                }
+              });
+            }
           }
           layer.close(index);
         },
