@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
+-- version 4.5.2
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: 2018-01-16 10:05:02
--- 服务器版本： 10.1.19-MariaDB
--- PHP Version: 5.6.28
+-- Host: localhost
+-- Generation Time: 2018-01-16 15:04:14
+-- 服务器版本： 10.1.10-MariaDB
+-- PHP Version: 7.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -42,7 +42,8 @@ CREATE TABLE `admin` (
 INSERT INTO `admin` (`id`, `account`, `password`, `name`, `sex`, `quanxian`) VALUES
 (1, 'admin', '202cb962ac59075b964b07152d234b70', 'admin', '男', '1'),
 (2, 'admin1', '202cb962ac59075b964b07152d234b70', '普通管理员1', '女', '0'),
-(3, 'admin2', '202cb962ac59075b964b07152d234b70', '普通管理员2', '女', '0');
+(3, 'admin2', '202cb962ac59075b964b07152d234b70', '普通管理员2', '女', '0'),
+(4, 'admin3', '202cb962ac59075b964b07152d234b70', 'ccc', '女', '0');
 
 -- --------------------------------------------------------
 
@@ -63,7 +64,8 @@ INSERT INTO `bumen` (`id`, `name`) VALUES
 (1, '技术部'),
 (2, '人事部'),
 (3, '服务部'),
-(4, '销售部');
+(4, '销售部'),
+(5, 'aaa');
 
 -- --------------------------------------------------------
 
@@ -87,7 +89,8 @@ INSERT INTO `daiban` (`id`, `user_id`, `shixiang`, `endtime`) VALUES
 (2, 2, '测试事项2', 1516426620),
 (3, 2, '测试事项3', 1518241140),
 (4, 2, '测试事项4', 1517290860),
-(5, 2, '测试事项5', 1516426920);
+(5, 2, '测试事项5', 1516426920),
+(6, 21, 'aaaaa', 1516281360);
 
 -- --------------------------------------------------------
 
@@ -123,7 +126,9 @@ INSERT INTO `qiandao` (`id`, `user_id`, `qiandaotime`, `shenhe`, `qiandaodidian`
 (16, 10, '2018-01-16 14:30:27', 1, '108.2519, 24.8358'),
 (17, 11, '2018-01-16 14:30:27', 1, '108.2519, 24.8358'),
 (18, 12, '2018-01-16 14:30:27', 1, '108.2519, 24.8358'),
-(19, 13, '2018-01-16 14:30:27', 1, '108.2519, 24.8358');
+(19, 13, '2018-01-16 14:30:27', 1, '108.2519, 24.8358'),
+(20, 20, '2018-01-16 20:42:57', 0, '108.2519, 24.8358'),
+(21, 21, '2018-01-16 21:16:04', 0, '108.2519, 24.8358');
 
 -- --------------------------------------------------------
 
@@ -145,9 +150,7 @@ CREATE TABLE `qingjia` (
 --
 
 INSERT INTO `qingjia` (`id`, `reason`, `user_id`, `start_time`, `end_time`, `shenhe`) VALUES
-(1, '测试原因1', 2, 1516083540, 1516169940, 1),
-(2, '测试原因2', 2, 1516083960, 1516256760, 1),
-(3, '测试原因3', 2, 1516343340, 1516429740, 1);
+(17, 'ccccccsss', 21, 1516194960, 1516281360, 1);
 
 -- --------------------------------------------------------
 
@@ -166,25 +169,27 @@ CREATE TABLE `user` (
   `sex` varchar(255) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
   `ruzhitime` int(100) DEFAULT NULL,
-  `nianjia` int(10) NOT NULL
+  `nianjia` int(10) NOT NULL,
+  `qingjia` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `user`
 --
 
-INSERT INTO `user` (`id`, `account`, `password`, `gonghao`, `name`, `bumen`, `zhiwei`, `sex`, `age`, `ruzhitime`, `nianjia`) VALUES
-(2, 'mht', '202cb962ac59075b964b07152d234b70', '01', '马化腾', '3', '2', '女', 26, 1516608300, 0),
-(3, 'my', '202cb962ac59075b964b07152d234b70', '02', '马云', '3', '4', '男', 43, 1514968680, 0),
-(4, 'lqd', '202cb962ac59075b964b07152d234b70', '03', '刘强东', '1', '3', '男', 33, 1514795940, 0),
-(5, 'cx', '202cb962ac59075b964b07152d234b70', '04', '陈翔', '1', '1', '男', 33, 1514882700, 0),
-(6, 'user05', '202cb962ac59075b964b07152d234b70', '05', 'user05', '4', '10', '男', 21, 1515055560, 0),
-(7, 'user06', '202cb962ac59075b964b07152d234b70', '06', 'user06', '2', '10', '女', 23, 1514882820, 0),
-(9, 'user08', '202cb962ac59075b964b07152d234b70', '08', 'user08', '2', '10', '女', 26, 1512550080, 0),
-(10, 'user09', '202cb962ac59075b964b07152d234b70', '09', 'user09', '1', '7', '女', 21, 1515574140, 0),
-(11, 'user10', '202cb962ac59075b964b07152d234b70', '10', 'user10', '3', '6', '男', 46, 1514969340, 0),
-(13, 'user12', '202cb962ac59075b964b07152d234b70', '12', 'user12', '2', '10', '女', 21, 1511772780, 0),
-(18, 'user15', '202cb962ac59075b964b07152d234b70', '15', 'user15', '2', '9', '女', 21, 1511783580, 0);
+INSERT INTO `user` (`id`, `account`, `password`, `gonghao`, `name`, `bumen`, `zhiwei`, `sex`, `age`, `ruzhitime`, `nianjia`, `qingjia`) VALUES
+(2, 'mht', '202cb962ac59075b964b07152d234b70', '01', '马化腾', '3', '2', '女', 26, 1514808300, 7, 4),
+(3, 'my', '202cb962ac59075b964b07152d234b70', '02', '马云', '3', '4', '男', 43, 1514968680, 7, 0),
+(4, 'lqd', '202cb962ac59075b964b07152d234b70', '03', '刘强东', '1', '3', '男', 33, 1514795940, 7, 0),
+(5, 'cx', '202cb962ac59075b964b07152d234b70', '04', '陈翔', '1', '1', '男', 33, 1514882700, 7, 0),
+(6, 'user05', '202cb962ac59075b964b07152d234b70', '05', 'user05', '4', '10', '男', 21, 1515055560, 7, 0),
+(7, 'user06', '202cb962ac59075b964b07152d234b70', '06', 'user06', '2', '10', '女', 23, 1514882820, 7, 0),
+(9, 'user08', '202cb962ac59075b964b07152d234b70', '08', 'user08', '2', '10', '女', 26, 1512550080, 7, 0),
+(10, 'user09', '202cb962ac59075b964b07152d234b70', '09', 'user09', '1', '7', '女', 21, 1515574140, 7, 0),
+(11, 'user10', '202cb962ac59075b964b07152d234b70', '10', 'user10', '3', '6', '男', 46, 1514969340, 7, 0),
+(13, 'user12', '202cb962ac59075b964b07152d234b70', '12', 'user12', '2', '10', '女', 21, 1511772780, 7, 0),
+(18, 'user15', '202cb962ac59075b964b07152d234b70', '15', 'user15', '2', '9', '女', 21, 1511783580, 7, 0),
+(21, 'css', '202cb962ac59075b964b07152d234b70', '0123', '测试222', '1', '3', '男', 21, 1515417180, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -212,7 +217,8 @@ INSERT INTO `zhiwei` (`id`, `name`) VALUES
 (8, '测试助理'),
 (9, '人事部总监'),
 (10, '测试'),
-(11, '新测试');
+(11, '新测试'),
+(12, 'ccc');
 
 --
 -- Indexes for dumped tables
@@ -268,37 +274,37 @@ ALTER TABLE `zhiwei`
 -- 使用表AUTO_INCREMENT `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- 使用表AUTO_INCREMENT `bumen`
 --
 ALTER TABLE `bumen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- 使用表AUTO_INCREMENT `daiban`
 --
 ALTER TABLE `daiban`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- 使用表AUTO_INCREMENT `qiandao`
 --
 ALTER TABLE `qiandao`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- 使用表AUTO_INCREMENT `qingjia`
 --
 ALTER TABLE `qingjia`
-  MODIFY `id` int(111) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(111) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- 使用表AUTO_INCREMENT `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- 使用表AUTO_INCREMENT `zhiwei`
 --
 ALTER TABLE `zhiwei`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
