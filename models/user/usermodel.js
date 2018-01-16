@@ -32,9 +32,9 @@ module.exports = {
 		});
   },
   // 获取员工签到记录的页码
-  getSignPage:  function(callback) {
-    var sql = "select ceil(count(id)/10) as page from qiandao;";
-    db.exec(sql, '', function(err, rows) {
+  getSignPage:  function(userid, callback) {
+    var sql = "select ceil(count(id)/10) as page from qiandao where user_id = ?;";
+    db.exec(sql, userid, function(err, rows) {
       if (err) {
         callback(err);
       }
@@ -62,9 +62,9 @@ module.exports = {
 		});
   },
   // 获取员工待办事项的页码
-  getDaiBanPage: function(callback) {
-    var sql = "select ceil(count(id)/10) as page from daiban;";
-    db.exec(sql, '', function(err, rows) {
+  getDaiBanPage: function(userid, callback) {
+    var sql = "select ceil(count(id)/10) as page from daiban where user_id = ?;";
+    db.exec(sql, userid, function(err, rows) {
       if (err) {
         callback(err);
       }

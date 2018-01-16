@@ -22,8 +22,11 @@ router.get('/home', function(req, res, next) {
 
 // 管理员登录
 router.post('/login', function(req, res, next) {
-	var username = req.body.username;
-	var password = req.body.password;
+	var hash = crypto.createHash('md5');
+  var username = req.body.username;
+  var reqpassword = req.body.password;
+  hash.update(reqpassword);
+  var password = hash.digest('hex');
 	adminmodel.selectAdmin(username, function(err, rows) {
 		if (err) {
 			res.json({
@@ -302,6 +305,267 @@ router.post('/addzhiwei', function(req, res, next) {
 		}
 		res.json({
 			'success': '添加职位成功'
+		});
+	});
+});
+
+// 修改部门名称
+router.post('/updatezhiwei', function(req, res, next) {
+	var zhiweiid = req.body.zhiweiid;
+	var name = req.body.name;
+	adminmodel.updateZhiWeiName(name, zhiweiid, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next();
+		}
+		res.json({
+			'success': '修改职位名称成功'
+		});
+	});
+});
+
+// 管理员查看员工待办事项页面
+router.post('/daiBan', function(req, res, next) {
+  var page = 0;
+  adminmodel.getDaiBanPage(function(err, pagenum) {
+    if (err) {
+      return next(err);
+    }
+    adminmodel.getDaiBan(page, function(err, daibanList) {
+      if (err) {
+        return next(err);
+      }
+      for (var i = 0; i < daibanList.length; i++) {
+        var rztime = daibanList[i].endtime * 1000;
+        var d = new Date(rztime);
+        daibanList[i].endtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+      }
+      res.render('admin/DaiBan/_DaiBan', {
+        pagenum: pagenum[0],
+        daibanList: daibanList
+      }, function(err, html) {
+        res.json({
+          'success': true,
+          'view': html
+        });
+      });
+    });
+  });
+});
+
+// 获取某一页员工待办事项页面
+router.post('/pageDaiBan', function(req, res, next) {
+	var page = (req.body.page - 1) * 10;
+	adminmodel.getDaiBan(page, function(err, daibanList) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next(err);
+		}
+		for (var i = 0; i < daibanList.length; i++) {
+			var rztime = daibanList[i].endtime * 1000;
+			var d = new Date(rztime);
+			daibanList[i].endtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+		}
+		res.json({
+			'success': true,
+			'result': daibanList
+		});
+	});
+});
+
+// 管理员查看员工考勤情况页面
+router.post('/kaoQin', function(req, res, next) {
+	res.render('admin/KaoQin/_KaoQin', {}, function(err, html) {
+		res.json({
+			'success': true,
+			'view': html
+		});
+	});
+});
+router.post('/kaoQinCon', function(req, res, next) {
+	var page = (req.body.page - 1) * 10 || 0;
+	var reqnowdate;
+	if (req.body.date) {
+		reqnowdate = new Date(req.body.date);
+	} else {
+		reqnowdate = new Date();
+	}
+	var nowdate = reqnowdate.getFullYear() + '-' + (reqnowdate.getMonth() + 1) + '-' + reqnowdate.getDate();
+	adminmodel.getDayQianDaoPage(nowdate, function(err, pagenum) {
+		if (err) {
+			return next(err);
+		}
+		adminmodel.getDayQianDaoInfo(nowdate, page, function(err, kaoqinList) {
+			if (err) {
+				return next(err);
+			}
+			for (var i = 0; i < kaoqinList.length; i++) {
+				var rztime = kaoqinList[i].qiandaotime;
+				var d = new Date(rztime);
+				kaoqinList[i].qiandaotime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+			}
+			res.render('admin/KaoQin/_KaoQinCon', {
+				pagenum: pagenum[0],
+				kaoqinList: kaoqinList
+			}, function(err, html) {
+				res.json({
+					'success': true,
+					'view': html
+				});
+			});
+		});
+	});
+});
+
+// 审核考勤
+router.post('/examineQianDao', function(req, res, next) {
+	var kaoqinid = req.body.kaoqinid;
+	adminmodel.examineQianDao(kaoqinid, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next(err);
+		}
+		res.json({
+			'success': '该条考勤已通过审核~'
+		});
+	});
+});
+
+// 管理员查看员工请假记录页面
+router.post('/qingJia', function(req, res, next) {
+  var page = 0;
+  adminmodel.getQingJiaPage(function(err, pagenum) {
+    if (err) {
+      return next(err);
+    }
+    adminmodel.getQingJia(page, function(err, qingjiaList) {
+      if (err) {
+        return next(err);
+      }
+			for (var i = 0; i < qingjiaList.length; i++) {
+	      var rztime = qingjiaList[i].start_time * 1000;
+	      var rztime2 = qingjiaList[i].end_time * 1000;
+	      var d = new Date(rztime);
+	      var d2 = new Date(rztime2);
+	      qingjiaList[i].start_time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+	      qingjiaList[i].end_time = d2.getFullYear() + '-' + (d2.getMonth() + 1) + '-' + d2.getDate() + ' ' + d2.getHours() + ':' + d2.getMinutes() + ':' + d2.getSeconds();
+	    }
+      res.render('admin/QingJia/_QingJia', {
+        pagenum: pagenum[0],
+        qingjiaList: qingjiaList
+      }, function(err, html) {
+        res.json({
+          'success': true,
+          'view': html
+        });
+      });
+    });
+  });
+});
+
+// 审核请假
+router.post('/examineQingJia', function(req, res, next) {
+	var qingjiaid = req.body.qingjiaid;
+	adminmodel.examineQingJia(qingjiaid, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next(err);
+		}
+		res.json({
+			'success': '该条请假已通过审核~'
+		});
+	});
+});
+
+// 修改密码
+router.post('/updatePassword', function(req, res, next) {
+  var hash = crypto.createHash('md5');
+  var hash1 = crypto.createHash('md5');
+  var userid = req.session.uid;
+  var reqpassword = req.body.password;
+  var reqoldPassword = req.body.oldpassword;
+  hash.update(reqpassword);
+  hash1.update(reqoldPassword);
+  var password = hash.digest('hex');
+  var oldpassword = hash1.digest('hex');
+  adminmodel.getOldPassword(userid, function(err, rows) {
+    if (err) {
+      res.json({
+        'error': err
+      });
+      return next(err);
+    }
+    if (oldpassword != rows[0].password) {
+      res.json({
+        'error': '请输入正确的原密码!'
+      });
+      return next(err);
+    }
+    adminmodel.updatePassword(password, userid, function(err) {
+      if (err) {
+        res.json({
+          'error': err
+        });
+        return next(err);
+      }
+      res.json({
+        'success': '修改密码成功'
+      });
+    });
+  });
+});
+
+// 管理员列表界面
+router.post('/adminList', function(req, res, next) {
+	adminmodel.getAdmin(function(err, rows) {
+		res.render('admin/Admin/_AdminList', {
+			adminList: rows
+		}, function(err, html) {
+			res.json({
+				'success': true,
+				'view': html
+			});
+		});
+	});
+});
+
+// 添加管理员modal
+router.post('/addAdminModal', function(req, res, next) {
+	res.render('admin/Admin/_AddAdmin', {}, function(err, html) {
+		res.json({
+			'success': true,
+			'view': html
+		});
+	});
+});
+
+// 添加管理员
+router.post('/addAdmin', function(req, res, next) {
+	var hash = crypto.createHash('md5');
+  var account = req.body.account;
+	var reqpassword = req.body.password;
+	hash.update(reqpassword);
+  var password = hash.digest('hex');
+	var name = req.body.name;
+	var sex = req.body.sex;
+	var quanxian = req.body.quanxian;
+	adminmodel.addAdmin(account, password, name, sex, quanxian, function(err) {
+		if (err) {
+			res.json({
+				'error': err
+			});
+			return next(err);
+		}
+		res.json({
+			'success': '添加管理员成功'
 		});
 	});
 });

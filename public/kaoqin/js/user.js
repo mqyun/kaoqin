@@ -276,9 +276,6 @@ $(document).on('click', '.userUpdatePassword', function() {
         });
       }
       layer.close(index);
-    },
-    success: function() {
-      $('#datetimepicker-daiban').datetimepicker();
     }
   });
 });

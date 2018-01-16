@@ -20,23 +20,45 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-	resave: true,
-	saveUninitialized: false,
-	secret: 'secret'
+  resave: true,
+  saveUninitialized: false,
+  secret: 'secret'
 }));
 app.use(function(req, res, next) {
-	// 用户真实名字
-	res.locals.name = req.session.name || '';
-	// 用户的id
-	res.locals.uid = req.session.uid || '';
-	// 用户的权限
-	res.locals.quanxian = req.session.quanxian || '';
-	next();
+  // 用户真实名字
+  res.locals.name = req.session.name || '';
+  // 用户的id
+  res.locals.uid = req.session.uid || '';
+  // 用户的权限
+  res.locals.quanxian = req.session.quanxian || '';
+  next();
+});
+
+app.use(function(req, res, next) {
+  if (!req.session.name) {
+    if (req.url == '/' || req.url == '/login' || req.url == '/admin' || req.url == '/admin/' || req.url == '/admin/login') {
+      next();
+    } else {
+      res.redirect('/');
+    }
+  } else if (req.session.name) {
+    if (req.url == '/' || req.url == '/admin' || req.url == '/admin/') {
+			if (req.session.quanxian != '') {
+				res.redirect('/admin/home');
+			} else {
+				res.redirect('/home');
+			}
+    } else {
+      next();
+    }
+  }
 });
 
 app.use('/', index);

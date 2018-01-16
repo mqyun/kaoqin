@@ -57,7 +57,7 @@ router.get('/home', function(req, res, next) {
 router.post('/userSignView', function(req, res, next) {
   var page = (req.body.page - 1) * 10 || 0;
   var userid = req.session.uid;
-  usermodel.getSignPage(function(err, pagenum) {
+  usermodel.getSignPage(userid, function(err, pagenum) {
     if (err) {
       return next(err);
     }
@@ -140,7 +140,7 @@ router.post('/pagesigninfo', function(req, res, next) {
 router.post('/userDaiBan', function(req, res, next) {
   var page = 0;
   var userid = req.session.uid;
-  usermodel.getDaiBanPage(function(err, pagenum) {
+  usermodel.getDaiBanPage(userid, function(err, pagenum) {
     if (err) {
       return next(err);
     }
@@ -266,7 +266,7 @@ router.post('/addQingJia', function(req, res, next) {
   });
 });
 
-// 获取某一页签到记录
+// 获取某一页请假记录
 router.post('/pageqingjiainfo', function(req, res, next) {
   var userid = req.session.uid;
 	var page = (req.body.page - 1) * 10;
@@ -325,6 +325,14 @@ router.post('/updatePassword', function(req, res, next) {
       });
     });
   });
+});
+
+// 退出登录
+router.get('/logout', function(req, res) {
+    req.session.name = '';
+    req.session.uid = '';
+    req.session.quanxian = '';
+    res.redirect('/');
 });
 
 module.exports = router;

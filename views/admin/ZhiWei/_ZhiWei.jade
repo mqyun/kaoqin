@@ -34,7 +34,7 @@ section.wrapper
                 tr
                   td= zhiweiList[i].name
                   td
-                    button.btn.btn-primary.btn-xs(data-zhiweiid= zhiweiList[i].id)
+                    button.btn.btn-primary.btn-xs.btn-xgzhiweiname(data-zhiweiid= zhiweiList[i].id)
                       i.icon-pencil 修改名称
                   - if (i+1 == zhiweiList.length)
                     td
@@ -42,5 +42,5 @@ section.wrapper
                   - else
                     td= zhiweiList[i+1].name
                     td
-                      button.btn.btn-primary.btn-xs(data-zhiweiid= zhiweiList[i+1].id)
+                      button.btn.btn-primary.btn-xs.btn-xgzhiweiname(data-zhiweiid= zhiweiList[i+1].id)
                         i.icon-pencil 修改名称

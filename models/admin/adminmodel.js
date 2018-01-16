@@ -43,7 +43,7 @@ module.exports = {
   },
   // 添加员工
   adduser: function(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, callback) {
-    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime) values(?,?,?,?,?,?,?,?,?);";
+    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, nianjia) values(?,?,?,?,?,?,?,?,?,0);";
     db.exec(sql, [account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime], function(err) {
       if (err) {
         callback(err);
@@ -161,9 +161,19 @@ module.exports = {
       callback(err);
     });
   },
+  // 获取某一天签到情况的页码
+  getDayQianDaoPage: function(nowdate, callback) {
+    var sql = "select ceil(count(qiandao.id)/10) as page from qiandao, user where ( datediff ( qiandaotime , '" + nowdate + "' ) = 0 ) and qiandao.user_id = user.id;";
+    db.exec(sql, '', function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
   // 获取某一天的签到情况
-  getDayQianDaoInfo: function(nowdate, callback) {
-    var sql = "select qiandao.*, user.name as username from qiandao, user where ( datediff ( qiandaotime , '" + nowdate + "' ) = 0 ) and qiandao.user_id = user.id;";
+  getDayQianDaoInfo: function(nowdate, page, callback) {
+    var sql = "select qiandao.*, user.name as username from qiandao, user where ( datediff ( qiandaotime , '" + nowdate + "' ) = 0 ) and qiandao.user_id = user.id limit " + page + ", 10;";
     db.exec(sql, '', function(err, rows) {
       if (err) {
         callback(err);
@@ -179,6 +189,26 @@ module.exports = {
         callback(err);
       }
       callback(err);
+    });
+  },
+  // 获取员工请假页码
+  getQingJiaPage: function(callback) {
+    var sql = "select ceil(count(id)/10) as page from qingjia;";
+    db.exec(sql, '', function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
+  // 获取员工请假
+  getQingJia: function(page, callback) {
+    var sql = "select qingjia.*, user.name as username from qingjia,user where qingjia.user_id=user.id order by qingjia.id desc limit " + page + ", 10;";
+    db.exec(sql, '', function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
     });
   },
   // 审核请假
@@ -201,6 +231,16 @@ module.exports = {
 			callback(err, rows);
 		});
   },
+  // 获取原密码
+  getOldPassword: function(id, callback) {
+    var sql = "select * from admin where id = ?;";
+    db.exec(sql, id, function(err, rows) {
+			if (err) {
+				callback(err);
+			}
+			callback(err, rows);
+		});
+  },
   // 修改密码
   updatePassword: function(password, id, callback) {
     var sql = "update admin set password = ? where id = ?;";
@@ -212,13 +252,23 @@ module.exports = {
     });
   },
   // 添加管理员
-  addAdmin: function(account, password, name, sex, qianxian, callback) {
-    var sql = "insert into admin(account, password, name, sex, qianxian) values(?,?,?,?,?);";
-    db.exec(sql, [account, password, name, sex, qianxian], function(err) {
+  addAdmin: function(account, password, name, sex, quanxian, callback) {
+    var sql = "insert into admin(account, password, name, sex, quanxian) values(?,?,?,?,?);";
+    db.exec(sql, [account, password, name, sex, quanxian], function(err) {
       if (err) {
         callback(err);
       }
       callback(err);
     });
+  },
+  // 获取所有管理员
+  getAdmin: function(callback) {
+    var sql = "select * from admin;";
+    db.exec(sql, '', function(err, rows) {
+			if (err) {
+				callback(err);
+			}
+			callback(err, rows);
+		});
   },
 }

@@ -316,3 +316,277 @@ $(document).on('click', '.btn-addzhiwei', function() {
     });
   }
 });
+
+// 修改职位名称
+$(document).on('click', '.btn-xgzhiweiname', function() {
+  var zhiweiid = $(this).data('zhiweiid');
+  layer.open({
+    type: 1,
+    title: '修改职位名称',
+    area: ['800px'],
+    skin: 'layui-layer-lan',
+    content: '<div class="panel-body">\
+    <div class="form col-md-12"><form class="form-horizontal tasi-form">\
+    <div class="form-group"><label class="control-label col-lg-3">名称</label>\
+    <div class="col-lg-9"><input type="text" name="xg-zhiweiname" class="form-control"></div></div>\
+    </div></div>',
+    btn: ['修改'],
+    shadeClose: true,
+    yes: function(index, layero) {
+      var name = $('input[name="xg-zhiweiname"]').val();
+      var data = {
+        'zhiweiid': zhiweiid,
+        'name': name
+      }
+      layer.close(index);
+      if (name.length == 0) {
+        showTips('warning', 'Warning!', '请填写职位名称！');
+      } else {
+        ajaxPost('/admin/updatezhiwei', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success!', result.success);
+            setTimeout(function() {
+              $('.leftli-zhiwei').click();
+            }, 1000);
+          }
+        });
+      }
+    },
+    success: function() {
+      $('#datetimepicker2').datetimepicker();
+    }
+  });
+});
+
+// 获取待办事项
+$(document).on('click', '.leftli-daiban', function() {
+  ajaxPost('/admin/daiBan', {}, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+    }
+  });
+});
+
+// 获取某一页待办事项
+$(document).on('click', '.daiban-pageli', function() {
+  $('.daiban-pageli').removeClass('active');
+  $(this).addClass('active');
+  var page = $(this).data('pagenum');
+  var data = {
+    'page': page
+  }
+  ajaxPost('/admin/pageDaiBan', data, function(result) {
+    if (result.success) {
+      $('.tbody-daibaninfo').html('');
+      var list = result.result;
+      for (var i = 0; i < list.length; i++) {
+        var tr = '<tr><td>' + list[i].shixiang + '</td><td>' + list[i].username + '</td><td>' + list[i].endtime + '</td></tr>';
+        $('.tbody-daibaninfo').append(tr);
+      }
+    }
+  });
+});
+
+// 获取考勤
+$(document).on('click', '.leftli-kaoqin', function() {
+  ajaxPost('/admin/kaoQin', {}, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+      $('#datetimepicker-select').datetimepicker();
+      ajaxPost('/admin/kaoQinCon', {}, function(result) {
+        if (result.success) {
+          $('#kaoqinSection').html('');
+          $('#kaoqinSection').append(result.view);
+          localStorage.clear();
+        }
+      });
+    }
+  });
+});
+
+// 查询某一天的考勤
+$(document).on('click', '.btn-select-daykaoqin', function() {
+  var date = $('input[name="selecttime"]').val();
+  var data = {
+    'date': date
+  }
+  ajaxPost('/admin/kaoQinCon', data, function(result) {
+    if (result.success) {
+      locSetItem('selectDate', date);
+      $('#kaoqinSection').html('');
+      $('#kaoqinSection').append(result.view);
+    }
+  });
+});
+
+// 获取某一页考勤
+$(document).on('click', '.kaoqin-pageli', function() {
+  var page = $(this).data('pagenum');
+  var date = locGetItem('selectDate') || '';
+  var index = $(this).index();
+  var data = {
+    'page': page,
+    'date': date
+  }
+  ajaxPost('/admin/kaoQinCon', data, function(result) {
+    if (result.success) {
+      $('#kaoqinSection').html('');
+      $('#kaoqinSection').append(result.view);
+      $('.kaoqin-pageli').removeClass('active');
+      $('.kaoqin-pageli').eq(index).addClass('active');
+    }
+  });
+});
+
+// 审核考勤
+$(document).on('click', '.btn-shenhekaoqin', function() {
+  var kaoqinid = $(this).data('kaoqinid');
+  var data = {
+    'kaoqinid': kaoqinid
+  }
+  showBtnTips('', '审核通过！', '确认审核该条考勤吗？', '取消', '确认', function() {
+    ajaxPost('/admin/examineQianDao', data, function(result) {
+      if (result.success) {
+        showTips('success', 'Success!', result.success);
+        setTimeout(function() {
+          $('.kaoqin-pageli.active').click();
+        }, 500);
+      }
+    });
+  });
+});
+
+// 获取请假
+$(document).on('click', '.leftli-qingjia', function() {
+  ajaxPost('/admin/qingJia', {}, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+    }
+  });
+});
+
+// 获取某一页员工请假记录
+$(document).on('click', '.qingjia-pageli', function() {
+  var page = $(this).data('pagenum');
+  var index = $(this).index();
+  var data = {
+    'page': page
+  }
+  ajaxPost('/admin/qingJia', data, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+      $('.qingjia-pageli').removeClass('active');
+      $('.qingjia-pageli').eq(index).addClass('active');
+    }
+  });
+});
+
+// 审核通过请假记录
+$(document).on('click', '.btn-shenheqingjia', function() {
+  var qingjiaid = $(this).data('qingjiaid');
+  var data = {
+    'qingjiaid': qingjiaid
+  }
+  showBtnTips('', '审核通过！', '确认通过该条请假记录吗？', '取消', '确认', function() {
+    ajaxPost('/admin/examineQingJia', data, function(result) {
+      if (result.success) {
+        showTips('success', 'Success!', result.success);
+        setTimeout(function() {
+          $('.qingjia-pageli.active').click();
+        }, 500);
+      }
+    });
+  });
+});
+
+// 修改密码
+$(document).on('click', '.adminUpdatePassword', function() {
+  layer.open({
+    type: 1,
+    title: '修改密码',
+    area: ['800px'],
+    skin: 'layui-layer-lan',
+    content: '<div class="panel-body">\
+    <div class="form col-md-12"><form class="form-horizontal tasi-form">\
+    <div class="form-group"><label class="control-label col-lg-3">原密码</label>\
+    <div class="col-lg-9"><input type="password" name="adminoldpassword" class="form-control"></div></div>\
+    <div class="form-group"><label class="control-label col-lg-3">新密码</label>\
+    <div class="col-lg-9"><input type="password" name="adminpassword" class="form-control"></div></div></div></div>',
+    btn: ['修改'],
+    shadeClose: true,
+    yes: function(index, layero) {
+      var oldpassword = $('input[name="adminoldpassword"]').val();
+      var password = $('input[name="adminpassword"]').val();
+      var data = {
+        'oldpassword': oldpassword,
+        'password': password
+      }
+      if (oldpassword.length == 0 || password.length == 0) {
+        showTips('warning', 'Warning!', '请检查填写信息！');
+      } else {
+        ajaxPost('/admin/updatePassword', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success!', result.success);
+          }
+        });
+      }
+      layer.close(index);
+    }
+  });
+});
+
+// 管理员列表
+$(document).on('click', '.leftli-admin', function() {
+  ajaxPost('/admin/adminList', {}, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+    }
+  });
+});
+
+// 添加管理员modal
+$(document).on('click', '.btn-addadmin', function() {
+  ajaxPost('/admin/addAdminModal', {}, function(result) {
+    if (result.success) {
+      layer.open({
+        type: 1,
+        title: '添加管理员',
+        area: ['800px'],
+        skin: 'layui-layer-lan',
+        content: result.view,
+        btn: ['添加'],
+        shadeClose: true,
+        yes: function(index, layero) {
+          var account = $('input[name="admin-account"]').val();
+          var password = $('input[name="admin-password"]').val();
+          var name = $('input[name="admin-name"]').val();
+          var sex = $('select[name="admin-sex"]').val();
+          var quanxian = $('select[name="admin-quanxian"]').val();
+          var data = {
+            'account': account,
+            'password': password,
+            'name': name,
+            'sex': sex,
+            'quanxian': quanxian
+          }
+          if (account.length == 0 || password.length == 0 || name.length == 0) {
+            showTips('warning', 'Warning!', '请检查填写信息！');
+          } else {
+            ajaxPost('/admin/addAdmin', data, function(result) {
+              if (result.success) {
+                showTips('success', 'Success!', result.success);
+                $('.leftli-admin').click();
+              }
+            });
+          }
+          layer.close(index);
+        }
+      });
+    }
+  });
+});

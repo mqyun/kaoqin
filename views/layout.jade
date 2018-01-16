@@ -63,7 +63,7 @@ html(lang='en')
               a(href='javascript:;')
                 i.icon-dashboard
                 span 部门管理
-            li.sub-menu
+            li.sub-menu.leftli-daiban
               a(href='javascript:;')
                 i.icon-dashboard
                 span 员工代办事项管理
@@ -75,22 +75,19 @@ html(lang='en')
               a(href='javascript:;')
                 i.icon-dashboard
                 span 职位发布管理
-            li.sub-menu
+            li.sub-menu.leftli-kaoqin
               a(href='javascript:;')
                 i.icon-dashboard
                 span 考勤记录管理
-            li.sub-menu
+            li.sub-menu.leftli-qingjia
               a(href='javascript:;')
                 i.icon-dashboard
                 span 请假记录
-            li.sub-menu
-              a(href='javascript:;')
-                i.icon-dashboard
-                span 个人信息
-            li.sub-menu
-              a(href='javascript:;')
-                i.icon-dashboard
-                span 添加管理员
+            - if (quanxian == 1)
+              li.sub-menu.leftli-admin
+                a(href='javascript:;')
+                  i.icon-dashboard
+                  span 添加管理员
     mixin userleftnav
       aside
         #sidebar.nav-collapse

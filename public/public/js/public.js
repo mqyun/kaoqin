@@ -95,3 +95,11 @@ function GetPostion(callback) {
 		callback(longtitude, latitude);
   });
 }
+
+function locSetItem(key, value) {
+	localStorage.setItem(key, value);
+}
+
+function locGetItem(key) {
+	return localStorage.getItem(key);
+}
