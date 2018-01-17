@@ -25,6 +25,27 @@ section.wrapper
               .col-sm-10
                 input.form-control(type='text', placeholder='姓名', name='name')
             .form-group
+              label.col-sm-2.control-label 入职时间
+              .col-sm-10
+                #datetimepicker1.input-group.date
+                  input.form-control(type='text', name='ruzhitime')
+                  span.input-group-addon
+                    span.glyphicon.glyphicon-calendar
+            .form-group
+              label.col-sm-2.control-label 上班时间
+              .col-sm-10
+                #datetimepicker-shangban.input-group.date
+                  input.form-control(type='text', name='shangban')
+                  span.input-group-addon
+                    span.glyphicon.glyphicon-calendar
+            .form-group
+              label.col-sm-2.control-label 下班时间
+              .col-sm-10
+                #datetimepicker-xiaban.input-group.date
+                  input.form-control(type='text', name='xiaban')
+                  span.input-group-addon
+                    span.glyphicon.glyphicon-calendar
+            .form-group
               label.col-sm-2.control-label 部门
               .col-sm-10
                 select.form-control(name='bumen')
@@ -46,13 +67,6 @@ section.wrapper
               label.col-sm-2.control-label 年龄
               .col-sm-10
                 input.form-control(type='text', placeholder='年龄', name='age')
-            .form-group
-              label.col-sm-2.control-label 入职时间
-              .col-sm-10
-                #datetimepicker1.input-group.date
-                  input.form-control(type='text', name='ruzhitime')
-                  span.input-group-addon
-                    span.glyphicon.glyphicon-calendar
             .form-group
               .col-lg-offset-2.col-lg-10
                 input.btn.btn-success.btn-adduser(type='button', value='添加')

@@ -38,8 +38,12 @@ $(document).on('click', '.leftli-userinfo', function() {
     if (result.success) {
       $('#main-content').html('');
       $('#main-content').append(result.view);
-      $(function() {
-        $('#datetimepicker1').datetimepicker();
+      $('#datetimepicker1').datetimepicker();
+      $('#datetimepicker-shangban').datetimepicker({
+        format: 'LT'
+      });
+      $('#datetimepicker-xiaban').datetimepicker({
+        format: 'LT'
       });
     }
   });
@@ -134,6 +138,8 @@ $(document).on('click', '.btn-adduser', function() {
   var age = $('input[name="age"]').val();
   var ruzhitime = $('input[name="ruzhitime"]').val();
   ruzhitime = Date.parse(new Date(ruzhitime)) / 1000;
+  var shangban = getBanTime($('input[name="shangban"]').val());
+  var xiaban = getBanTime($('input[name="xiaban"]').val());
   var data = {
     'account': account,
     'password': password,
@@ -143,10 +149,12 @@ $(document).on('click', '.btn-adduser', function() {
     'zhiwei': zhiwei,
     'sex': sex,
     'age': age,
-    'ruzhitime': ruzhitime
+    'ruzhitime': ruzhitime,
+    'shangban': shangban,
+    'xiaban': xiaban
   }
   if (account.length == 0 || password.length == 0 || gonghao.length == 0 || name.length == 0 ||
-    age.length == 0 || ruzhitime.length == 0) {
+    age.length == 0) {
     showTips('warning', 'Warning!', '请检查填写信息！');
   } else {
     ajaxPost('/admin/adduser', data, function(result) {

@@ -42,9 +42,9 @@ module.exports = {
     });
   },
   // 添加员工
-  adduser: function(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, callback) {
-    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, nianjia, qingjia) values(?,?,?,?,?,?,?,?,?,7,0);";
-    db.exec(sql, [account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime], function(err) {
+  adduser: function(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, shangban, xiaban, callback) {
+    var sql = "insert into user(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, nianjia, qingjia, shangban, xiaban) values(?,?,?,?,?,?,?,?,?,7,0,?,?);";
+    db.exec(sql, [account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, shangban, xiaban], function(err) {
       if (err) {
         callback(err);
       }
@@ -183,7 +183,7 @@ module.exports = {
   },
   // 获取所有签到记录
   getAllQianDao: function(datetime, callback) {
-    var sql = "select qiandao.qiandaotime, qiandao.qiandaodidian, qiandao.chidao, user.name as username from qiandao, user where ( datediff ( qiandaotime , '" + datetime + "' ) = 0 ) and qiandao.user_id = user.id;";
+    var sql = "select qiandao.*, user.name as username from qiandao, user where ( datediff ( qiandaotime , '" + datetime + "' ) = 0 ) and qiandao.user_id = user.id";
     db.exec(sql, '', function(err, rows) {
       if (err) {
         callback(err);

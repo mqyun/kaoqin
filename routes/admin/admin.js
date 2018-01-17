@@ -177,7 +177,9 @@ router.post('/adduser', function(req, res, next) {
   var sex = req.body.sex;
   var age = req.body.age;
   var ruzhitime = req.body.ruzhitime;
-  adminmodel.adduser(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, function(err) {
+  var shangban = req.body.shangban;
+  var xiaban = req.body.xiaban;
+  adminmodel.adduser(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, shangban, xiaban, function(err) {
     if (err) {
       res.json({
         'error': err
@@ -408,8 +410,11 @@ router.post('/kaoQinCon', function(req, res, next) {
       }
       for (var i = 0; i < kaoqinList.length; i++) {
         var rztime = kaoqinList[i].qiandaotime;
+        var rztime1 = kaoqinList[i].qiantuitime;
         var d = new Date(rztime);
+        var d1 = new Date(rztime1);
         kaoqinList[i].qiandaotime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        kaoqinList[i].qiantuitime = d1.getFullYear() + '-' + (d1.getMonth() + 1) + '-' + d1.getDate() + ' ' + d1.getHours() + ':' + d1.getMinutes() + ':' + d1.getSeconds();
       }
       res.render('admin/KaoQin/_KaoQinCon', {
         pagenum: pagenum[0],
@@ -503,12 +508,15 @@ router.post('/xlsx', function(req, res, next) {
       return next(err);
     }
     var data = [
-      ['签到员工', '签到时间', '签到地点', '是否迟到']
+      ['员工', '签到时间', '签到地点', '是否迟到', '签退时间', '签退地点', '早退情况']
     ];
     for (var i = 0; i < rows.length; i++) {
       var qiandaotime = rows[i].qiandaotime;
       var d = new Date(qiandaotime);
       rows[i].qiandaotime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+      var qiantuitime = rows[i].qiantuitime;
+      var d1 = new Date(qiantuitime);
+      rows[i].qiantuitime = d1.getFullYear() + '-' + (d1.getMonth() + 1) + '-' + d1.getDate() + ' ' + d1.getHours() + ':' + d1.getMinutes() + ':' + d1.getSeconds();
       if (rows[i].chidao == 1) {
         rows[i].chidao = '未迟到';
       } else {
@@ -522,6 +530,15 @@ router.post('/xlsx', function(req, res, next) {
       arr.push(value.qiandaotime);
       arr.push(value.qiandaodidian);
       arr.push(value.chidao);
+      if (value.qiantuididian == null) {
+        arr.push('未签退');
+        arr.push('未签退');
+        arr.push('未签退');
+      } else {
+        arr.push(value.qiantuitime);
+        arr.push(value.qiantuididian);
+        arr.push(value.zaotui);
+      }
       data.push(arr);
     }
     var buffer = xlsx.build([{

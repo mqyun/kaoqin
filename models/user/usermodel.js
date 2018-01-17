@@ -21,10 +21,30 @@ module.exports = {
       callback(err, rows);
     });
   },
+  // 获取员工上下班时间
+  getUpOrDownTime: function(userid, callback) {
+    var sql = "select shangban, xiaban from user where id = ?;";
+    db.exec(sql, userid, function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
   // 员工签到
   userSign: function(user_id, qiandaodidian, chidao, callback) {
     var sql = "insert into qiandao(user_id, qiandaotime, shenhe, qiandaodidian, chidao) values(?,now(),0,?,?);";
 		db.exec(sql, [user_id, qiandaodidian, chidao], function(err) {
+			if (err) {
+				callback(err);
+			}
+			callback(err);
+		});
+  },
+  // 员工签退
+  userSignOut: function(qiantuididian, zaotui, id, callback) {
+    var sql = "update qiandao set qiantuitime = now(), shenhe = 0, qiantuididian = ?, zaotui = ? where id = ?;";
+		db.exec(sql, [qiantuididian, zaotui, id], function(err) {
 			if (err) {
 				callback(err);
 			}

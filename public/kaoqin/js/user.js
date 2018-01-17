@@ -41,27 +41,77 @@ $(document).on('click', '.leftli-usersign', function() {
 
 // 员工签到
 $(document).on('click', '.btn-sign', function() {
-  GetPostion(function(x, y) {
-    x = x.toFixed(4);
-    y = y.toFixed(4);
-    var zb = x + ', ' + y;
-    var data = {
-      'qiandaodidian': zb
-    }
-    // 判断用户所处经纬度是否可以签到
-    console.log(data);
-    if ((x > 108.2509 && x < 108.2521) && (y > 24.8349 && y < 24.8361)) {
-      ajaxPost('/userSign', data, function(result) {
-        if (result.success) {
-          showTips('success', 'Success!', result.success + '签到地点为：' + zb);
-          setTimeout(function() {
-            $('.leftli-usersign').click();
-          }, 1000);
+  getPostion(function(x, y) {
+    x = x.toFixed(6);
+    y = y.toFixed(6);
+    getPlace(x, y, function(place) {
+      var data;
+      if ((x > 121.579000 && x < 121.580000) && (y > 29.885000 && y < 29.886000)) {
+        data = {
+          'qiandaodidian': place,
+          'waiqin': 0
         }
-      });
-    } else {
-      showTips('error', 'Error!', '您所在的位置不允许签到!');
-    }
+        ajaxPost('/userSign', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success!', result.success + '签到地点为：' + place);
+            setTimeout(function() {
+              $('.leftli-usersign').click();
+            }, 1000);
+          }
+        });
+      } else {
+        data = {
+          'qiandaodidian': place,
+          'waiqin': 1
+        }
+        ajaxPost('/userSign', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success!', result.success + '签到地点为：' + place);
+            setTimeout(function() {
+              $('.leftli-usersign').click();
+            }, 1000);
+          }
+        });
+      }
+    });
+  });
+});
+
+// 员工签退
+$(document).on('click', '.btn-signout', function() {
+  getPostion(function(x, y) {
+    x = x.toFixed(6);
+    y = y.toFixed(6);
+    getPlace(x, y, function(place) {
+      var data;
+      if ((x > 121.579000 && x < 121.580000) && (y > 29.885000 && y < 29.886000)) {
+        data = {
+          'qiantuididian': place,
+          'weigui': 0
+        }
+        ajaxPost('/userSignOut', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success!', result.success + '签退地点为：' + place);
+            setTimeout(function() {
+              $('.leftli-usersign').click();
+            }, 1000);
+          }
+        });
+      } else {
+        data = {
+          'qiantuididian': place,
+          'weigui': 1
+        }
+        ajaxPost('/userSignOut', data, function(result) {
+          if (result.success) {
+            showTips('success', 'Success(违规签退)!', result.success + '签退地点为：' + place);
+            setTimeout(function() {
+              $('.leftli-usersign').click();
+            }, 1000);
+          }
+        });
+      }
+    });
   });
 });
 
@@ -156,7 +206,7 @@ $(document).on('click', '.daiban-pageli', function() {
       $('.tbody-daibaninfo').html('');
       var list = result.result;
       for (var i = 0; i < list.length; i++) {
-        var tr= '<tr><td>' + list[i].shixiang + '</td><td>' + list[i].endtime + '</td></tr>';
+        var tr = '<tr><td>' + list[i].shixiang + '</td><td>' + list[i].endtime + '</td></tr>';
         $('.tbody-daibaninfo').append(tr);
       }
     }
@@ -237,9 +287,9 @@ $(document).on('click', '.qingjia-pageli', function() {
       for (var i = 0; i < list.length; i++) {
         var tr;
         if (list[i].shenhe == 0) {
-          tr= '<tr><td>' + list[i].reason + '</td><td>' + list[i].start_time + '</td><td>' + list[i].end_time + '</td><td>未审核</td></tr>';
+          tr = '<tr><td>' + list[i].reason + '</td><td>' + list[i].start_time + '</td><td>' + list[i].end_time + '</td><td>未审核</td></tr>';
         } else {
-          tr= '<tr><td>' + list[i].reason + '</td><td>' + list[i].start_time + '</td><td>' + list[i].end_time + '</td><td>已审核</td></tr>';
+          tr = '<tr><td>' + list[i].reason + '</td><td>' + list[i].start_time + '</td><td>' + list[i].end_time + '</td><td>已审核</td></tr>';
         }
         $('.tbody-qingjiainfo').append(tr);
       }

@@ -67,8 +67,11 @@ router.post('/userSignView', function(req, res, next) {
       }
       for (var i = 0; i < signList.length; i++) {
         var rztime = signList[i].qiandaotime;
+        var rztime1 = signList[i].qiantuitime;
         var d = new Date(rztime);
+        var d1 = new Date(rztime1);
         signList[i].qiandaotime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        signList[i].qiantuitime = d1.getFullYear() + '-' + (d1.getMonth() + 1) + '-' + d1.getDate() + ' ' + d1.getHours() + ':' + d1.getMinutes() + ':' + d1.getSeconds();
       }
       res.render('user/UserSign/_UserSign', {
         pagenum: pagenum[0],
@@ -87,6 +90,7 @@ router.post('/userSignView', function(req, res, next) {
 router.post('/userSign', function(req, res, next) {
   var userid = req.session.uid;
   var qiandaodidian = req.body.qiandaodidian;
+  var waiqin = req.body.waiqin;
   var reqnowdate = new Date();
   var nowdate = reqnowdate.getFullYear() + '-' + (reqnowdate.getMonth() + 1) + '-' + reqnowdate.getDate();
   usermodel.isTodaySign(nowdate, userid, function(err, rows) {
@@ -102,26 +106,109 @@ router.post('/userSign', function(req, res, next) {
       });
       return next(err);
     }
-    var suctime = Date.parse(new Date(nowdate + ' 09:00:00')) / 1000;
-    var nowtime = Date.parse(new Date()) / 1000;
-    var rescon;
-    var chidao;
-    if (nowtime < suctime) {
-      rescon = '，未迟到!';
-      chidao = 1;
-    } else {
-      rescon = '，您迟到了!';
-      chidao = 0;
-    }
-    usermodel.userSign(userid, qiandaodidian, chidao, function(err) {
+    usermodel.getUpOrDownTime(userid, function(err, upOrDownTime) {
       if (err) {
         res.json({
           'error': err
         });
         return next(err);
       }
+      var suctime = Date.parse(new Date(nowdate + ' ' + upOrDownTime[0].shangban + ':00')) / 1000;
+      var nowtime = Date.parse(new Date()) / 1000;
+      var rescon;
+      var chidao;
+      if (waiqin == 1) {
+        rescon = '，（不在允许区域内签到）您迟到了!';
+        chidao = 0;
+      } else {
+        if (nowtime < suctime) {
+          rescon = '，未迟到!';
+          chidao = 1;
+        } else {
+          rescon = '，您迟到了!';
+          chidao = 0;
+        }
+      }
+      usermodel.userSign(userid, qiandaodidian, chidao, function(err) {
+        if (err) {
+          res.json({
+            'error': err
+          });
+          return next(err);
+        }
+        res.json({
+          'success': '签到成功' + rescon
+        });
+      });
+    });
+  });
+});
+
+// 员工签退
+router.post('/userSignOut', function(req, res, next) {
+  var userid = req.session.uid;
+  var qiantuididian = req.body.qiantuididian;
+  var weigui = req.body.weigui;
+  var reqnowdate = new Date();
+  var nowdate = reqnowdate.getFullYear() + '-' + (reqnowdate.getMonth() + 1) + '-' + reqnowdate.getDate();
+  usermodel.isTodaySign(nowdate, userid, function(err, rows) {
+    if (err) {
       res.json({
-        'success': '签到成功' + rescon
+        'error': err
+      });
+      return next(err);
+    }
+    if (rows.length == 0) {
+      res.json({
+        'error': '您今天还没有签到，请先签到！'
+      });
+      return next(err);
+    }
+    if (rows.length > 0 && rows[0].qiantuididian != null) {
+      res.json({
+        'error': '您今天已经签退过了，请不要重复签退！'
+      });
+      return next(err);
+    }
+    var itemid = rows[0].id;
+    usermodel.getUpOrDownTime(userid, function(err, upOrDownTime) {
+      if (err) {
+        res.json({
+          'error': err
+        });
+        return next(err);
+      }
+      var suctime = Date.parse(new Date(nowdate + ' ' + upOrDownTime[0].xiaban + ':00')) / 1000;
+      var nowtime = Date.parse(new Date()) / 1000;
+      var rescon;
+      var zaotui;
+      if (weigui == 1) {
+        if (nowtime > suctime) {
+          rescon = '，未早退!';
+          zaotui = '成功签退(违规操作)';
+        } else {
+          rescon = '，您早退了!';
+          zaotui = '早退(违规操作)';
+        }
+      } else {
+        if (nowtime > suctime) {
+          rescon = '，未早退!';
+          zaotui = '成功签退';
+        } else {
+          rescon = '，您早退了!';
+          zaotui = '早退';
+        }
+      }
+      usermodel.userSignOut(qiantuididian, zaotui, itemid, function(err) {
+        if (err) {
+          res.json({
+            'error': err
+          });
+          return next(err);
+        }
+        res.json({
+          'success': '签退成功' + rescon
+        });
       });
     });
   });

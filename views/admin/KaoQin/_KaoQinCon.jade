@@ -11,10 +11,19 @@
             | 签到时间
           th
             i.icon-bookmark
-            | 签到地点经纬度
+            | 签到地点
           th
             i.icon-bookmark
             | 是否迟到
+          th.hidden-phone
+            i.icon-question-sign
+            | 签退时间
+          th
+            i.icon-bookmark
+            | 签退地点
+          th
+            i.icon-bookmark
+            | 是否早退
           th
             i.icon-bookmark
             | 审核状态
@@ -28,6 +37,14 @@
               td 未迟到
             - else
               td 迟到
+            - if (kaoqinitem.qiantuididian == null)
+              td 未签退
+              td 未签退
+              td 未签退
+            - else
+              td= kaoqinitem.qiantuitime
+              td= kaoqinitem.qiantuididian
+              td= kaoqinitem.zaotui
             - if (kaoqinitem.shenhe == 0)
               td
                 button.btn.btn-sm.btn-primary.btn-shenhekaoqin(data-kaoqinid= kaoqinitem.id) 审核通过
