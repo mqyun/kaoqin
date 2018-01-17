@@ -102,7 +102,18 @@ router.post('/userSign', function(req, res, next) {
       });
       return next(err);
     }
-    usermodel.userSign(userid, qiandaodidian, function(err) {
+    var suctime = Date.parse(new Date(nowdate + ' 09:00:00')) / 1000;
+    var nowtime = Date.parse(new Date()) / 1000;
+    var rescon;
+    var chidao;
+    if (nowtime < suctime) {
+      rescon = '，未迟到!';
+      chidao = 1;
+    } else {
+      rescon = '，您迟到了!';
+      chidao = 0;
+    }
+    usermodel.userSign(userid, qiandaodidian, chidao, function(err) {
       if (err) {
         res.json({
           'error': err
@@ -110,7 +121,7 @@ router.post('/userSign', function(req, res, next) {
         return next(err);
       }
       res.json({
-        'success': '签到成功'
+        'success': '签到成功' + rescon
       });
     });
   });
@@ -119,8 +130,8 @@ router.post('/userSign', function(req, res, next) {
 // 获取某一页签到记录
 router.post('/pagesigninfo', function(req, res, next) {
   var userid = req.session.uid;
-	var page = (req.body.page - 1) * 10;
-	usermodel.getSignRecord(userid, page, function(err, signList) {
+  var page = (req.body.page - 1) * 10;
+  usermodel.getSignRecord(userid, page, function(err, signList) {
     if (err) {
       return next(err);
     }
@@ -129,11 +140,11 @@ router.post('/pagesigninfo', function(req, res, next) {
       var d = new Date(rztime);
       signList[i].qiandaotime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     }
-		res.json({
-			'success': true,
-			'result': signList
-		});
-	});
+    res.json({
+      'success': true,
+      'result': signList
+    });
+  });
 });
 
 // 员工待办事项页面
@@ -187,8 +198,8 @@ router.post('/addDaiBan', function(req, res, next) {
 // 获取某一页签到记录
 router.post('/pagedaibaninfo', function(req, res, next) {
   var userid = req.session.uid;
-	var page = (req.body.page - 1) * 10;
-	usermodel.getDaiban(userid, page, function(err, daibanList) {
+  var page = (req.body.page - 1) * 10;
+  usermodel.getDaiban(userid, page, function(err, daibanList) {
     if (err) {
       return next(err);
     }
@@ -197,11 +208,11 @@ router.post('/pagedaibaninfo', function(req, res, next) {
       var d = new Date(rztime);
       daibanList[i].endtime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
     }
-		res.json({
-			'success': true,
-			'result': daibanList
-		});
-	});
+    res.json({
+      'success': true,
+      'result': daibanList
+    });
+  });
 });
 
 // 员工请假页面
@@ -300,8 +311,8 @@ router.post('/addQingJia', function(req, res, next) {
 // 获取某一页请假记录
 router.post('/pageqingjiainfo', function(req, res, next) {
   var userid = req.session.uid;
-	var page = (req.body.page - 1) * 10;
-	usermodel.getQingJia(userid, page, function(err, qingjiaList) {
+  var page = (req.body.page - 1) * 10;
+  usermodel.getQingJia(userid, page, function(err, qingjiaList) {
     if (err) {
       return next(err);
     }
@@ -313,11 +324,11 @@ router.post('/pageqingjiainfo', function(req, res, next) {
       qingjiaList[i].start_time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
       qingjiaList[i].end_time = d2.getFullYear() + '-' + (d2.getMonth() + 1) + '-' + d2.getDate() + ' ' + d2.getHours() + ':' + d2.getMinutes() + ':' + d2.getSeconds();
     }
-		res.json({
-			'success': true,
-			'result': qingjiaList
-		});
-	});
+    res.json({
+      'success': true,
+      'result': qingjiaList
+    });
+  });
 });
 
 // 修改密码
@@ -360,10 +371,10 @@ router.post('/updatePassword', function(req, res, next) {
 
 // 退出登录
 router.get('/logout', function(req, res) {
-    req.session.name = '';
-    req.session.uid = '';
-    req.session.quanxian = '';
-    res.redirect('/');
+  req.session.name = '';
+  req.session.uid = '';
+  req.session.quanxian = '';
+  res.redirect('/');
 });
 
 module.exports = router;

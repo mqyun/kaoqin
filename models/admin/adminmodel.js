@@ -4,42 +4,42 @@ module.exports = {
   // 验证用户
   selectAdmin: function(username, callback) {
     var sql = "select * from admin where account = ?;";
-		db.exec(sql, username, function(err, rows) {
-			if (err) {
-				callback(err);
-			}
-			callback(err, rows);
-		});
+    db.exec(sql, username, function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
   },
   // 添加部门
   addbumen: function(name, callback) {
     var sql = "insert into bumen(name) values(?);";
-		db.exec(sql, name, function(err) {
-			if (err) {
-				callback(err);
-			}
-			callback(err);
-		});
+    db.exec(sql, name, function(err) {
+      if (err) {
+        callback(err);
+      }
+      callback(err);
+    });
   },
   // 获取所有部门
   getbumen: function(callback) {
     var sql = "select * from bumen;";
     db.exec(sql, '', function(err, rows) {
-			if (err) {
-				callback(err);
-			}
-			callback(err, rows);
-		});
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
   },
   // 修改部门名称
   updateBuMenName: function(name, id, callback) {
     var sql = "update bumen set name = ? where id = ?;";
     db.exec(sql, [name, id], function(err) {
-			if (err) {
-				callback(err);
-			}
-			callback(err);
-		});
+      if (err) {
+        callback(err);
+      }
+      callback(err);
+    });
   },
   // 添加员工
   adduser: function(account, password, gonghao, name, bumen, zhiwei, sex, age, ruzhitime, callback) {
@@ -144,12 +144,12 @@ module.exports = {
   // 添加职位
   addzhiwei: function(name, callback) {
     var sql = "insert into zhiwei(name) values(?);";
-		db.exec(sql, name, function(err) {
-			if (err) {
-				callback(err);
-			}
-			callback(err);
-		});
+    db.exec(sql, name, function(err) {
+      if (err) {
+        callback(err);
+      }
+      callback(err);
+    });
   },
   // 修改职位名称
   updateZhiWeiName: function(name, id, callback) {
@@ -181,6 +181,16 @@ module.exports = {
       callback(err, rows);
     });
   },
+  // 获取所有签到记录
+  getAllQianDao: function(datetime, callback) {
+    var sql = "select qiandao.qiandaotime, qiandao.qiandaodidian, qiandao.chidao, user.name as username from qiandao, user where ( datediff ( qiandaotime , '" + datetime + "' ) = 0 ) and qiandao.user_id = user.id;";
+    db.exec(sql, '', function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
   // 审核签到
   examineQianDao: function(id, callback) {
     var sql = "update qiandao set shenhe = 1 where id = ?;";
@@ -189,6 +199,36 @@ module.exports = {
         callback(err);
       }
       callback(err);
+    });
+  },
+  // 获取所有员工
+  getAllUser: function(callback) {
+    var sql = "select * from user;";
+    db.exec(sql, '', function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
+  // 获取某员工迟到情况分页
+  getUserChiDaoPage: function(id, callback) {
+    var sql = "select ceil(count(qiandao.id)/10) as page from qiandao where user_id = ? and chidao = 0;";
+    db.exec(sql, id, function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
+  },
+  // 根据员工id获取员工迟到情况
+  getUserChiDao: function(id, page, callback) {
+    var sql = "select * from qiandao where user_id = ? and chidao = 0 limit " + page + ", 10;";
+    db.exec(sql, id, function(err, rows) {
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
     });
   },
   // 获取员工请假页码
@@ -225,21 +265,21 @@ module.exports = {
   getOldPassword: function(id, callback) {
     var sql = "select * from admin where id = ?;";
     db.exec(sql, id, function(err, rows) {
-			if (err) {
-				callback(err);
-			}
-			callback(err, rows);
-		});
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
   },
   // 获取原密码
   getOldPassword: function(id, callback) {
     var sql = "select * from admin where id = ?;";
     db.exec(sql, id, function(err, rows) {
-			if (err) {
-				callback(err);
-			}
-			callback(err, rows);
-		});
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
   },
   // 修改密码
   updatePassword: function(password, id, callback) {
@@ -265,10 +305,10 @@ module.exports = {
   getAdmin: function(callback) {
     var sql = "select * from admin;";
     db.exec(sql, '', function(err, rows) {
-			if (err) {
-				callback(err);
-			}
-			callback(err, rows);
-		});
+      if (err) {
+        callback(err);
+      }
+      callback(err, rows);
+    });
   },
 }

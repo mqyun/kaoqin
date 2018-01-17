@@ -22,9 +22,9 @@ module.exports = {
     });
   },
   // 员工签到
-  userSign: function(user_id, qiandaodidian, callback) {
-    var sql = "insert into qiandao(user_id, qiandaotime, shenhe, qiandaodidian) values(?,now(),0,?);";
-		db.exec(sql, [user_id, qiandaodidian], function(err) {
+  userSign: function(user_id, qiandaodidian, chidao, callback) {
+    var sql = "insert into qiandao(user_id, qiandaotime, shenhe, qiandaodidian, chidao) values(?,now(),0,?,?);";
+		db.exec(sql, [user_id, qiandaodidian, chidao], function(err) {
 			if (err) {
 				callback(err);
 			}

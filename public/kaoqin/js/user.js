@@ -53,7 +53,7 @@ $(document).on('click', '.btn-sign', function() {
     if ((x > 108.2509 && x < 108.2521) && (y > 24.8349 && y < 24.8361)) {
       ajaxPost('/userSign', data, function(result) {
         if (result.success) {
-          showTips('success', 'Success!', result.success);
+          showTips('success', 'Success!', result.success + '签到地点为：' + zb);
           setTimeout(function() {
             $('.leftli-usersign').click();
           }, 1000);

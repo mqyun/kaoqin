@@ -11,12 +11,23 @@
             | 签到时间
           th
             i.icon-bookmark
+            | 签到地点经纬度
+          th
+            i.icon-bookmark
+            | 是否迟到
+          th
+            i.icon-bookmark
             | 审核状态
       tbody.tbody-kaoqininfo
         each kaoqinitem in kaoqinList
           tr
             td= kaoqinitem.username
             td= kaoqinitem.qiandaotime
+            td= kaoqinitem.qiandaodidian
+            - if (kaoqinitem.chidao == 1)
+              td 未迟到
+            - else
+              td 迟到
             - if (kaoqinitem.shenhe == 0)
               td
                 button.btn.btn-sm.btn-primary.btn-shenhekaoqin(data-kaoqinid= kaoqinitem.id) 审核通过

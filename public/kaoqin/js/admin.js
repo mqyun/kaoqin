@@ -421,6 +421,20 @@ $(document).on('click', '.btn-select-daykaoqin', function() {
   });
 });
 
+// 获取该日考勤报表
+$(document).on('click', '.btn-getxlsx', function() {
+  var datetime = $('input[name="selecttime"]').val();
+  var data = {
+    'datetime': datetime
+  }
+  ajaxPost('/admin/xlsx', data, function(result) {
+    if (result.success) {
+      showTips('success', 'Success!', result.success);
+      window.location.href = result.result;
+    }
+  });
+});
+
 // 获取某一页考勤
 $(document).on('click', '.kaoqin-pageli', function() {
   var page = $(this).data('pagenum');
@@ -452,10 +466,64 @@ $(document).on('click', '.btn-shenhekaoqin', function() {
         showTips('success', 'Success!', result.success);
         setTimeout(function() {
           $('.kaoqin-pageli.active').click();
+          $('.chidao-pageli.active').click();
         }, 500);
       }
     });
   });
+});
+
+// 获取迟到界面
+$(document).on('click', '.btn-tochidao', function() {
+  ajaxPost('/admin/ChiDao', {}, function(result) {
+    if (result.success) {
+      $('#main-content').html('');
+      $('#main-content').append(result.view);
+    }
+  });
+});
+
+// 获取某员工迟到情况
+$(document).on('click', '.btn-select-chidao', function() {
+  var userid = $('select[name="chidaouserid"]').val();
+  var data = {
+    'userid': userid
+  }
+  if (userid == '请选择员工') {
+    showTips('warning', 'Warning!', '请选择员工！');
+  } else {
+    ajaxPost('/admin/ChiDaoCon', data, function(result) {
+      if (result.success) {
+        locSetItem('selectUserid', userid);
+        $('#chidaoSection').html('');
+        $('#chidaoSection').append(result.view);
+      }
+    });
+  }
+});
+
+// 获取某一页该员工迟到情况
+$(document).on('click', '.chidao-pageli', function() {
+  var page = $(this).data('pagenum');
+  var userid = locGetItem('selectUserid') || '';
+  var index = $(this).index();
+  var data = {
+    'page': page,
+    'userid': userid
+  }
+  ajaxPost('/admin/ChiDaoCon', data, function(result) {
+    if (result.success) {
+      $('#chidaoSection').html('');
+      $('#chidaoSection').append(result.view);
+      $('.chidao-pageli').removeClass('active');
+      $('.chidao-pageli').eq(index).addClass('active');
+    }
+  });
+});
+
+// 返回员工考勤
+$(document).on('click', '.btn-backto-kaoqin', function() {
+  $('.leftli-kaoqin').click();
 });
 
 // 获取请假
