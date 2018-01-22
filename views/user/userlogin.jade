@@ -19,7 +19,9 @@ html(lang='en')
     script(src='/public/js/sweetalert.min.js')
   body.login-body
     .container
-      form.form-signin(style='margin-top: 200px;')
+      center  
+        img(src='/kaoqin/img/logo.png' style='width: 200px;height: 200px;margin-top: 20px;')
+      form.form-signin(style='margin-top: 10px;')
         h2.form-signin-heading 员工登录
         center
           h5
@@ -28,7 +30,6 @@ html(lang='en')
           input.form-control(type='text', placeholder='UserName', name='username', autofocus='')
           input.form-control(type='password', placeholder='Password', name='password')
           input.btn.btn-lg.btn-primary.btn-block.btn-tologin(type='button', value='登录')
-
 
     script(src='/bootstrap/js/jquery-1.8.3.min.js')
     script(src='/public/js/sweet-alert.min.js')

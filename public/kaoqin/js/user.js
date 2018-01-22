@@ -46,7 +46,7 @@ $(document).on('click', '.btn-sign', function() {
     y = y.toFixed(6);
     getPlace(x, y, function(place) {
       var data;
-      if ((x > 121.579000 && x < 121.580000) && (y > 29.885000 && y < 29.886000)) {
+      if ((x > 121.579800 && x < 121.579900) && (y > 29.885400 && y < 29.885500)) {
         data = {
           'qiandaodidian': place,
           'waiqin': 0
@@ -84,7 +84,7 @@ $(document).on('click', '.btn-signout', function() {
     y = y.toFixed(6);
     getPlace(x, y, function(place) {
       var data;
-      if ((x > 121.579000 && x < 121.580000) && (y > 29.885000 && y < 29.886000)) {
+      if ((x > 121.579800 && x < 121.579900) && (y > 29.885400 && y < 29.885500)) {
         data = {
           'qiantuididian': place,
           'weigui': 0
